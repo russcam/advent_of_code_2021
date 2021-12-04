@@ -6,13 +6,15 @@ fn main() {
         .filter_map(|l| l.trim().parse().ok())
         .collect();
 
-    let increasing = depths.windows(2)
+    let increasing = depths
+        .windows(2)
         .filter(|w| w[1] > w[0])
         .collect::<Vec<_>>();
 
     println!("increasing depths: {}", increasing.len());
 
-    let window_sums = depths.windows(3)
+    let window_sums = depths
+        .windows(3)
         .map(|w| w.iter().sum())
         .collect::<Vec<i32>>();
 

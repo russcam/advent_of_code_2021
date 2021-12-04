@@ -5,7 +5,7 @@ const INPUT: &str = include_str!("../../input/day_2.txt");
 pub enum Direction {
     Forward(i32),
     Down(i32),
-    Up(i32)
+    Up(i32),
 }
 
 fn main() {
@@ -29,7 +29,7 @@ fn main() {
         match direction {
             Forward(i) => horizontal_pos += i,
             Down(i) => depth += i,
-            Up(i) => depth -= i
+            Up(i) => depth -= i,
         }
     }
 
@@ -44,9 +44,9 @@ fn main() {
             Forward(i) => {
                 horizontal_pos += i;
                 depth += aim * i;
-            },
+            }
             Down(i) => aim += i,
-            Up(i) => aim -= i
+            Up(i) => aim -= i,
         }
     }
 
