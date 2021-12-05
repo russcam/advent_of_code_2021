@@ -6,7 +6,7 @@ const INPUT: &str = include_str!("../../input/day_4.txt");
 struct Bingo {
     numbers: Vec<usize>,
     last_number_index: usize,
-    boards: Vec<Board>
+    boards: Vec<Board>,
 }
 
 impl Bingo {
@@ -17,14 +17,13 @@ impl Bingo {
                 winning_boards.push(WinningBoard {
                     index: i,
                     last_number_index: index,
-                    score
+                    score,
                 });
             }
         }
 
         if !winning_boards.is_empty() {
-            winning_boards
-                .sort_by(|a, b| a.last_number_index.cmp(&b.last_number_index));
+            winning_boards.sort_by(|a, b| a.last_number_index.cmp(&b.last_number_index));
             Some(winning_boards)
         } else {
             None
@@ -51,7 +50,8 @@ impl FromStr for Bingo {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut lines = s.lines();
 
-        let numbers = lines.next()
+        let numbers = lines
+            .next()
             .unwrap()
             .split(',')
             .map(|c| c.parse().unwrap())
@@ -77,7 +77,7 @@ impl FromStr for Bingo {
         Ok(Self {
             numbers,
             last_number_index: 0,
-            boards
+            boards,
         })
     }
 }
@@ -92,7 +92,7 @@ struct WinningBoard {
 #[derive(Debug)]
 enum BoardNumber {
     Unmarked(usize),
-    Marked(usize)
+    Marked(usize),
 }
 
 impl BoardNumber {
@@ -118,7 +118,7 @@ impl BoardNumber {
 #[derive(Debug)]
 struct Board {
     rows: Vec<Vec<BoardNumber>>,
-    score_and_index: Option<(usize, usize)>
+    score_and_index: Option<(usize, usize)>,
 }
 
 impl Board {
@@ -184,11 +184,12 @@ impl Board {
     fn sum_unmarked_numbers(&self) -> usize {
         self.rows
             .iter()
-            .map(|r| r
-                .iter()
-                .filter(|b| b.is_unmarked())
-                .map(|b| b.value())
-                .collect::<Vec<usize>>())
+            .map(|r| {
+                r.iter()
+                    .filter(|b| b.is_unmarked())
+                    .map(|b| b.value())
+                    .collect::<Vec<usize>>()
+            })
             .flatten()
             .sum()
     }
@@ -206,5 +207,8 @@ fn main() {
     while bingo.draw_number() {}
 
     winning_boards = bingo.winning_boards().unwrap();
-    println!("score of last winning board: {}", winning_boards.last().unwrap().score);
+    println!(
+        "score of last winning board: {}",
+        winning_boards.last().unwrap().score
+    );
 }
