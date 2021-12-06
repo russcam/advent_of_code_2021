@@ -1,37 +1,28 @@
+use std::collections::VecDeque;
+
 const INPUT: &str = include_str!("../../input/day_6.txt");
 
 struct Ages {
-    counts: [usize; 9],
+    counts: VecDeque<usize>,
     day: usize,
 }
 
 impl Ages {
     pub fn from_fishes(fishes: &[u8]) -> Self {
-        let mut counts = [0usize; 9];
-
+        let mut counts = VecDeque::from(vec![0; 9]);
         for fish in fishes {
             let idx = *fish as usize;
             counts[idx] += 1;
         }
-
         Self { counts, day: 0 }
     }
 
     pub fn advance_days(&mut self, days: usize) {
         for _ in 0..days {
-            let mut new = 0;
-            let mut new_counts = [0usize; 9];
-            for age in 0..self.counts.len() {
-                let count = self.counts[age];
-                if age == 0 {
-                    new_counts[6] += count;
-                    new += count;
-                } else {
-                    new_counts[age - 1] += count;
-                }
+            if let Some(spawned) = self.counts.pop_front() {
+                self.counts[6] += spawned;
+                self.counts.push_back(spawned);
             }
-            new_counts[8] = new;
-            self.counts = new_counts;
         }
         self.day += days;
     }
