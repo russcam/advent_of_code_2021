@@ -13,21 +13,23 @@ enum LineType {
     Diagonal,
 }
 
+type Coord = (usize, usize);
+
 #[derive(Debug, Clone)]
 struct LineSegment {
-    start: (usize, usize),
-    end: (usize, usize),
-    curr: Option<(usize, usize)>,
+    start: Coord,
+    end: Coord,
+    curr: Option<Coord>,
     line_type: LineType,
 }
 
 impl LineSegment {
-    fn parse_coords(s: &str) -> (usize, usize) {
+    fn parse_coords(s: &str) -> Coord {
         let mut parts = s.split(',').map(|p| p.parse().unwrap());
         (parts.next().unwrap(), parts.next().unwrap())
     }
 
-    pub fn max_coords(&self) -> (usize, usize) {
+    pub fn max_coords(&self) -> Coord {
         let max_x = std::cmp::max(self.start.0, self.end.0);
         let max_y = std::cmp::max(self.start.1, self.end.1);
         (max_x, max_y)
@@ -59,7 +61,7 @@ impl FromStr for LineSegment {
 }
 
 impl Iterator for LineSegment {
-    type Item = (usize, usize);
+    type Item = Coord;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.curr.is_none() {
