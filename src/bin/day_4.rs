@@ -60,7 +60,7 @@ impl FromStr for Bingo {
         let mut boards = vec![];
         let mut board = None;
 
-        while let Some(line) = lines.next() {
+        for line in lines {
             if line.is_empty() {
                 if let Some(b) = board {
                     boards.push(b);
@@ -197,7 +197,7 @@ impl Board {
 
 fn main() {
     let mut bingo = Bingo::from_str(INPUT).unwrap();
-    while let None = bingo.winning_boards() {
+    while bingo.winning_boards().is_none() {
         bingo.draw_number();
     }
 

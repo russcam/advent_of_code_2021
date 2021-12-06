@@ -65,7 +65,7 @@ impl Iterator for LineSegment {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.curr.is_none() {
-            self.curr = Some(self.start.clone());
+            self.curr = Some(self.start);
             self.curr
         } else if self.curr == Some(self.end) {
             None
@@ -117,7 +117,7 @@ impl Plot {
         let max_y = max_y.iter().max().unwrap();
         let mut coords = vec![vec![Unmarked; *max_x]; *max_y];
         for line_segment in line_segments {
-            while let Some((x, y)) = line_segment.next() {
+            for (x, y) in line_segment {
                 coords[y - 1][x - 1] = match coords[y - 1][x - 1] {
                     Unmarked => Marked(1),
                     Marked(n) => Marked(n + 1),
@@ -132,10 +132,7 @@ impl Plot {
         self.coords
             .iter()
             .map(|r| {
-                r.iter().filter(|p| match p {
-                    Marked(n) if *n > 1 => true,
-                    _ => false,
-                })
+                r.iter().filter(|p| matches!(p, Marked(n) if *n > 1))
             })
             .flatten()
             .count()

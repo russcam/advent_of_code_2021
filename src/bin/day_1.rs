@@ -8,8 +8,7 @@ fn main() {
 
     let increasing = depths
         .windows(2)
-        .filter(|w| w[1] > w[0])
-        .collect::<Vec<_>>();
+        .filter(|w| w[1] > w[0]);
 
     println!("increasing depths: {}", increasing.len());
 
@@ -20,8 +19,7 @@ fn main() {
 
     let windows = window_sums
         .windows(2)
-        .filter(|w| w[1] > w[0])
-        .collect::<Vec<_>>();
+        .filter(|w| w[1] > w[0]);
 
     println!("increasing windows: {}", windows.len());
 }
