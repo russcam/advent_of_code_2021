@@ -8,11 +8,10 @@ struct Ages {
 }
 
 impl Ages {
-    pub fn from_fishes(fishes: &[u8]) -> Self {
+    pub fn from_fishes<I: Iterator<Item = usize>>(fishes: I) -> Self {
         let mut counts = VecDeque::from(vec![0; 9]);
         for fish in fishes {
-            let idx = *fish as usize;
-            counts[idx] += 1;
+            counts[fish] += 1;
         }
         Self { counts, day: 0 }
     }
@@ -33,8 +32,7 @@ impl Ages {
 }
 
 fn main() {
-    let fishes: Vec<u8> = INPUT.split(',').map(|s| s.parse().unwrap()).collect();
-    let mut ages = Ages::from_fishes(&fishes);
+    let mut ages = Ages::from_fishes(INPUT.split(',').map(|s| s.parse().unwrap()));
 
     ages.advance_days(80);
 
