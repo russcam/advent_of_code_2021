@@ -1,4 +1,5 @@
 use crate::Direction::{Down, Forward, Up};
+use std::str::FromStr;
 
 const INPUT: &str = include_str!("../../input/day_2.txt");
 
@@ -8,47 +9,81 @@ pub enum Direction {
     Up(i32),
 }
 
+impl FromStr for Direction {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split(' ');
+        let direction = parts.next().unwrap();
+        let value = parts.next().unwrap().parse().unwrap();
+        match direction {
+            "forward" => Ok(Self::Forward(value)),
+            "down" => Ok(Self::Down(value)),
+            "up" => Ok(Self::Up(value)),
+            _ => Err(()),
+        }
+    }
+}
+
+impl Direction {
+    pub fn part_1(&self, position: &mut Position) {
+        match self {
+            Forward(i) => position.horizontal += i,
+            Down(i) => position.depth += i,
+            Up(i) => position.depth -= i,
+        }
+    }
+
+    pub fn part_2(&self, position: &mut Position) {
+        match self {
+            Forward(i) => {
+                position.horizontal += i;
+                position.depth += position.aim * i;
+            }
+            Down(i) => position.aim += i,
+            Up(i) => position.aim -= i,
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct Position {
+    horizontal: i32,
+    depth: i32,
+    aim: i32,
+}
+
+impl Position {
+    pub fn reset(&mut self) {
+        self.horizontal = 0;
+        self.depth = 0;
+        self.aim = 0;
+    }
+
+    pub fn value(&self) -> i32 {
+        self.horizontal * self.depth
+    }
+}
+
 fn main() {
     let directions: Vec<Direction> = INPUT
         .lines()
-        .map(|l| {
-            if l.starts_with("forward") {
-                Direction::Forward(l.trim_start_matches("forward ").parse().ok().unwrap())
-            } else if l.starts_with("down") {
-                Direction::Down(l.trim_start_matches("down ").parse().ok().unwrap())
-            } else {
-                Direction::Up(l.trim_start_matches("up ").parse().ok().unwrap())
-            }
-        })
+        .filter_map(|l| Direction::from_str(l).ok())
         .collect();
 
-    let mut horizontal_pos = 0;
-    let mut depth = 0;
+    let mut position = Position::default();
 
     for direction in directions.iter() {
-        match direction {
-            Forward(i) => horizontal_pos += i,
-            Down(i) => depth += i,
-            Up(i) => depth -= i,
-        }
+        direction.part_1(&mut position);
     }
 
-    println!("final position: {}", horizontal_pos * depth);
+    println!("final position: {}", position.value());
 
-    horizontal_pos = 0;
-    depth = 0;
-    let mut aim = 0;
+    position.reset();
 
     for direction in directions {
-        match direction {
-            Forward(i) => {
-                horizontal_pos += i;
-                depth += aim * i;
-            }
-            Down(i) => aim += i,
-            Up(i) => aim -= i,
-        }
+        direction.part_2(&mut position);
     }
 
-    println!("final position including aim: {}", horizontal_pos * depth);
+    println!("final position including aim: {}", position.value());
 }
