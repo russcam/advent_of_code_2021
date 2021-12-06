@@ -131,9 +131,7 @@ impl Plot {
     pub fn overlaps(&self) -> usize {
         self.coords
             .iter()
-            .map(|r| {
-                r.iter().filter(|p| matches!(p, Marked(n) if *n > 1))
-            })
+            .map(|r| r.iter().filter(|p| matches!(p, Marked(n) if *n > 1)))
             .flatten()
             .count()
     }

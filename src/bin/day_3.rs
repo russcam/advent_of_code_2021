@@ -75,11 +75,10 @@ impl DiagnosticReport {
                     break;
                 }
 
-                let count_zeros_ones =
-                    Self::count_zeros_ones(&oxygen_generator_report);
-                let s = Self::calculate_binary(
-                    &count_zeros_ones[i..i + 1],
-                    |zeros, ones| ones >= zeros);
+                let count_zeros_ones = Self::count_zeros_ones(&oxygen_generator_report);
+                let s = Self::calculate_binary(&count_zeros_ones[i..i + 1], |zeros, ones| {
+                    ones >= zeros
+                });
                 oxygen_generator_report.retain(|r| r[i] == s[0]);
             }
 
@@ -96,9 +95,9 @@ impl DiagnosticReport {
             for i in 0..len {
                 if co2_scrubber_report.len() > 1 {
                     let count_zeros_ones = Self::count_zeros_ones(&co2_scrubber_report);
-                    let s = Self::calculate_binary(
-                        &count_zeros_ones[i..i + 1],
-                        |zeros, ones| !(zeros <= ones));
+                    let s = Self::calculate_binary(&count_zeros_ones[i..i + 1], |zeros, ones| {
+                        zeros > ones
+                    });
                     co2_scrubber_report.retain(|r| r[i] == s[0]);
                 }
             }
@@ -110,7 +109,11 @@ impl DiagnosticReport {
     }
 
     fn calculate_binary<F: Fn(usize, usize) -> bool>(counts: &[Vec<usize>], f: F) -> BinaryVec {
-        counts.iter().map(|t| f(t[0], t[1])).collect::<Vec<_>>().into()
+        counts
+            .iter()
+            .map(|t| f(t[0], t[1]))
+            .collect::<Vec<_>>()
+            .into()
     }
 
     fn gamma(&self) -> BinaryVec {
@@ -143,7 +146,7 @@ impl From<&str> for DiagnosticReport {
             gamma: None,
             epsilon: None,
             oxygen: None,
-            co2: None
+            co2: None,
         }
     }
 }
