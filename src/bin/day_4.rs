@@ -207,7 +207,10 @@ fn main() {
 
     let mut winning_boards = bingo.winning_boards().unwrap();
     let first_board = &winning_boards[0];
-    println!("score of winning board: {}, index: {}", first_board.score, first_board.index);
+    println!(
+        "score of winning board: {}, index: {}",
+        first_board.score, first_board.index
+    );
 
     while bingo.draw_number() {}
 
@@ -215,7 +218,6 @@ fn main() {
     let last_board = winning_boards.last().unwrap();
     println!(
         "score of last winning board: {}, index: {}",
-        last_board.score,
-        last_board.index,
+        last_board.score, last_board.index,
     );
 }
