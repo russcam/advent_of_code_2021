@@ -25,27 +25,6 @@ impl FromStr for Direction {
     }
 }
 
-impl Direction {
-    pub fn part_1(&self, position: &mut Position) {
-        match self {
-            Forward(i) => position.horizontal += i,
-            Down(i) => position.depth += i,
-            Up(i) => position.depth -= i,
-        }
-    }
-
-    pub fn part_2(&self, position: &mut Position) {
-        match self {
-            Forward(i) => {
-                position.horizontal += i;
-                position.depth += position.aim * i;
-            }
-            Down(i) => position.aim += i,
-            Up(i) => position.aim -= i,
-        }
-    }
-}
-
 #[derive(Default)]
 pub struct Position {
     horizontal: i32,
@@ -54,6 +33,25 @@ pub struct Position {
 }
 
 impl Position {
+    pub fn part_1(&mut self, direction: &Direction) {
+        match direction {
+            Forward(i) => self.horizontal += i,
+            Down(i) => self.depth += i,
+            Up(i) => self.depth -= i,
+        }
+    }
+
+    pub fn part_2(&mut self, direction: &Direction) {
+        match direction {
+            Forward(i) => {
+                self.horizontal += i;
+                self.depth += self.aim * i;
+            }
+            Down(i) => self.aim += i,
+            Up(i) => self.aim -= i,
+        }
+    }
+
     pub fn reset(&mut self) {
         self.horizontal = 0;
         self.depth = 0;
@@ -73,16 +71,16 @@ fn main() {
 
     let mut position = Position::default();
 
-    for direction in directions.iter() {
-        direction.part_1(&mut position);
+    for direction in &directions {
+        position.part_1(direction);
     }
 
     println!("final position: {}", position.value());
 
     position.reset();
 
-    for direction in directions {
-        direction.part_2(&mut position);
+    for direction in &directions {
+        position.part_2(direction);
     }
 
     println!("final position including aim: {}", position.value());
