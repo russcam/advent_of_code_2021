@@ -43,15 +43,12 @@ impl Positions {
 
     pub fn part_1(&mut self) -> Outcome {
         let position = self.median();
-
-        let fuel: i32 = self.values.iter().map(|p| (*p - position).abs()).sum();
-
+        let fuel: i32 = self.values.iter().map(|p| (p - position).abs()).sum();
         Outcome { position, fuel }
     }
 
     pub fn part_2(&mut self) -> Outcome {
         let position = self.mean() as i32;
-
         let mut fuel = 0;
         for value in &self.values {
             let diff = (position - value).abs();
