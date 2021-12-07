@@ -139,7 +139,7 @@ impl Board {
     }
 
     pub fn mark(&mut self, number: usize, index: usize) {
-        if self.score_and_index.is_none() {
+        if !self.is_winner() {
             for row in &mut self.rows {
                 for board_number in row {
                     match board_number {
@@ -152,10 +152,14 @@ impl Board {
             }
 
             self.calculate_row_win(number, index);
-            if self.score_and_index.is_none() {
+            if !self.is_winner() {
                 self.calculate_column_win(number, index)
             }
         }
+    }
+
+    pub fn is_winner(&self) -> bool {
+        self.score_and_index.is_some()
     }
 
     pub fn score_and_index(&self) -> Option<(usize, usize)> {
@@ -202,13 +206,16 @@ fn main() {
     }
 
     let mut winning_boards = bingo.winning_boards().unwrap();
-    println!("score of winning board: {}", winning_boards[0].score);
+    let first_board = &winning_boards[0];
+    println!("score of winning board: {}, index: {}", first_board.score, first_board.index);
 
     while bingo.draw_number() {}
 
     winning_boards = bingo.winning_boards().unwrap();
+    let last_board = winning_boards.last().unwrap();
     println!(
-        "score of last winning board: {}",
-        winning_boards.last().unwrap().score
+        "score of last winning board: {}, index: {}",
+        last_board.score,
+        last_board.index,
     );
 }
