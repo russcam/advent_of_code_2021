@@ -41,6 +41,10 @@ impl Positions {
         sum as f32 / positions.len() as f32
     }
 
+    fn seq_sum(number: i32) -> i32 {
+        (number * (number + 1)) / 2
+    }
+
     pub fn part_1(&mut self) -> Outcome {
         let position = self.median();
         let fuel: i32 = self.values.iter().map(|p| (p - position).abs()).sum();
@@ -52,7 +56,7 @@ impl Positions {
         let mut fuel = 0;
         for value in &self.values {
             let diff = (position - value).abs();
-            fuel += (1..=diff).sum::<i32>();
+            fuel += Self::seq_sum(diff)
         }
 
         Outcome { position, fuel }
