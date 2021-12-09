@@ -30,16 +30,10 @@ impl Point {
     }
 
     pub fn is_low_point(&self, map: &Map) -> bool {
-        let adjacent = Self::adjacent_points(self, map);
-        let mut is_lower = false;
-        for a in adjacent.iter().flatten() {
-            is_lower = self.height < a.height;
-            if !is_lower {
-                break;
-            }
-        }
-
-        is_lower
+        Self::adjacent_points(self, map)
+            .iter()
+            .flatten()
+            .all(|a| self.height < a.height)
     }
 
     pub fn risk_level(&self) -> usize {
