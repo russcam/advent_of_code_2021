@@ -72,22 +72,17 @@ impl Point {
 
     fn expand<'a>(points: &mut HashSet<&'a Point>, point: &'a Point, map: &'a Map) {
         let adjacent = Self::adjacent_points(point, map);
-        for a in &adjacent {
-            match a {
-                None => continue,
-                Some(p) => {
-                    if p.height != 9 && !points.contains(p) {
-                        points.insert(p);
-                        Self::expand(points, p, map);
-                    }
-                }
+        for a in adjacent.iter().flatten() {
+            if a.height != 9 && !points.contains(a) {
+                points.insert(a);
+                Self::expand(points, a, map);
             }
         }
     }
 
-    fn adjacent_point(map: &Map, (x, y): (usize, usize)) -> Option<&Point> {
-        match map.rows.get(y) {
-            Some(r) => r.get(x),
+    fn adjacent_point(map: &Map, coord: Coord) -> Option<&Point> {
+        match map.rows.get(coord.1) {
+            Some(r) => r.get(coord.0),
             None => None,
         }
     }
