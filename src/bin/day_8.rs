@@ -15,8 +15,7 @@ impl From<&str> for SignalPatterns {
         let mut inputs = {
             let mut digits: Vec<Digit> = split
                 .next()
-                .map(|d| d.split(' ')
-                    .map(Digit::from))
+                .map(|d| d.split(' ').map(Digit::from))
                 .unwrap()
                 .collect();
             digits.sort_by(|d1, d2| d1.len.cmp(&d2.len));
@@ -25,15 +24,15 @@ impl From<&str> for SignalPatterns {
 
         let outputs: Vec<Vec<char>> = split
             .next()
-            .map(|d| d
-                .split(' ')
-                .map(|dd| {
-                    let mut ch: Vec<_> = dd.chars().collect();
-                    ch.sort_unstable();
-                    ch
-                })
-                .collect::<Vec<_>>()
-            )
+            .map(|d| {
+                d.split(' ')
+                    .map(|dd| {
+                        let mut ch: Vec<_> = dd.chars().collect();
+                        ch.sort_unstable();
+                        ch
+                    })
+                    .collect::<Vec<_>>()
+            })
             .unwrap();
 
         let mut digits = vec![None; 10];
@@ -81,16 +80,13 @@ impl From<&str> for SignalPatterns {
             .into_iter()
             .enumerate()
             .map(|(i, h)| {
-                let mut v : Vec<char> = h.unwrap().into_iter().collect();
+                let mut v: Vec<char> = h.unwrap().into_iter().collect();
                 v.sort_unstable();
                 (v, i)
             })
             .collect();
 
-        let outputs: Vec<_> = outputs
-            .into_iter()
-            .map(|d| *map.get(&d).unwrap())
-            .collect();
+        let outputs: Vec<_> = outputs.into_iter().map(|d| *map.get(&d).unwrap()).collect();
 
         let value = outputs
             .iter()
@@ -105,7 +101,7 @@ impl From<&str> for SignalPatterns {
 
 pub struct Digit {
     len: usize,
-    hash: HashSet<char>
+    hash: HashSet<char>,
 }
 
 impl Digit {
@@ -117,22 +113,21 @@ impl Digit {
 }
 
 fn main() {
-    let signal_patterns : Vec<SignalPatterns> = INPUT
-        .lines()
-        .map(SignalPatterns::from)
-        .collect();
+    let signal_patterns: Vec<SignalPatterns> = INPUT.lines().map(SignalPatterns::from).collect();
 
     let count: usize = signal_patterns
         .iter()
-        .map(|p| p.outputs.iter().filter(|v| matches!(v, 1 | 4 | 7 | 8)).count())
+        .map(|p| {
+            p.outputs
+                .iter()
+                .filter(|v| matches!(v, 1 | 4 | 7 | 8))
+                .count()
+        })
         .sum();
 
     println!("count of 1, 4, 7 and 8 in outputs: {}", count);
 
-    let sum: usize = signal_patterns
-        .iter()
-        .map(|p| p.value)
-        .sum();
+    let sum: usize = signal_patterns.iter().map(|p| p.value).sum();
 
     println!("sum of outputs: {}", sum);
 }
