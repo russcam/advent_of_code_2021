@@ -35,7 +35,7 @@ impl Octopus {
     }
 
     pub fn reset(&mut self) {
-        if self.energy_level > 9 {
+        if self.flashed {
             self.energy_level = 0;
             self.flashed = false;
         }
