@@ -66,7 +66,6 @@ impl From<&str> for Grid {
     fn from(s: &str) -> Self {
         let octopus = s
             .lines()
-            .rev()
             .map(|l| l.chars().map(|c| c.to_digit(10).unwrap().into()).collect())
             .collect::<Vec<Vec<_>>>();
 
