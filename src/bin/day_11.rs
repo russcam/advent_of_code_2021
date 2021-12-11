@@ -1,3 +1,8 @@
+use ansi_term::Style;
+use std::fmt::{Display, Formatter};
+use std::thread;
+use std::time::Duration;
+
 const INPUT: &str = include_str!("../../input/day_11.txt");
 
 #[derive(Debug)]
@@ -36,6 +41,15 @@ impl Octopus {
     }
 }
 
+impl Display for Octopus {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self.energy_level {
+            0 => write!(f, "{}", Style::new().bold().paint("0")),
+            n => write!(f, "{}", n),
+        }
+    }
+}
+
 #[derive(Debug)]
 struct Grid {
     octopus: Vec<Vec<Octopus>>,
@@ -68,6 +82,21 @@ impl From<&str> for Grid {
     }
 }
 
+impl Display for Grid {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        for row in &self.octopus {
+            for (i, octopus) in row.iter().enumerate() {
+                if i == row.len() - 1 {
+                    writeln!(f, "{}", octopus)?;
+                } else {
+                    write!(f, "{}", octopus)?;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 impl Grid {
     pub fn octopus_count(&self) -> usize {
         self.count
@@ -80,7 +109,14 @@ impl Grid {
         }
         let step_flash = self.step_flash;
         self.reset();
+        self.visualize();
         step_flash
+    }
+
+    fn visualize(&self) {
+        thread::sleep(Duration::from_millis(100));
+        print!("\x1B[2J\x1B[1;1H");
+        print!("{}", &self);
     }
 
     fn reset(&mut self) {
@@ -191,12 +227,7 @@ fn main() {
         }
     }
 
-    println!(
-        "total flashes after {} steps: {}",
-        100,
-        grid.total_flashes()
-    );
-
+    let total_flashes_after_100 = grid.total_flashes();
     if all_flash_step.is_none() {
         loop {
             steps += 1;
@@ -208,6 +239,7 @@ fn main() {
         }
     }
 
+    println!("total flashes after 100 steps: {}", total_flashes_after_100);
     println!(
         "first step in which all octopuses flash: {}",
         all_flash_step.unwrap()
