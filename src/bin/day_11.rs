@@ -21,15 +21,16 @@ impl From<u32> for Octopus {
 }
 
 impl Octopus {
-    pub fn increment(&mut self) {
+    pub fn increment_and_should_flash(&mut self) -> bool {
         self.energy_level += 1;
+        self.should_flash()
     }
 
     pub fn should_flash(&self) -> bool {
         self.energy_level > 9 && !self.flashed
     }
 
-    pub fn mark(&mut self) {
+    pub fn flash(&mut self) {
         self.flashed = true;
     }
 
@@ -58,6 +59,7 @@ struct Grid {
     step_flash: usize,
     y: usize,
     x: usize,
+    visualize: bool,
 }
 
 impl From<&str> for Grid {
@@ -78,6 +80,7 @@ impl From<&str> for Grid {
             total_flashes: 0,
             step_flash: 0,
             count,
+            visualize: false,
         }
     }
 }
@@ -108,8 +111,11 @@ impl Grid {
             flash = self.increment_adjacent();
         }
         let step_flash = self.step_flash;
+        self.total_flashes += step_flash;
         self.reset();
-        self.visualize();
+        if self.visualize {
+            self.visualize();
+        }
         step_flash
     }
 
@@ -132,8 +138,7 @@ impl Grid {
         let mut flash = false;
         for row in self.octopus.iter_mut() {
             for octopus in row {
-                octopus.increment();
-                flash |= octopus.should_flash();
+                flash |= octopus.increment_and_should_flash();
             }
         }
         flash
@@ -145,64 +150,55 @@ impl Grid {
             for x in 0..self.x {
                 let mut octopus = &mut self.octopus[y][x];
                 if octopus.should_flash() {
-                    self.total_flashes += 1;
                     self.step_flash += 1;
-                    octopus.mark();
+                    octopus.flash();
 
                     if y < self.y - 1 {
                         // above
-                        let mut octopus = &mut self.octopus[y + 1][x];
-                        octopus.increment();
-                        flash |= octopus.should_flash();
+                        octopus = &mut self.octopus[y + 1][x];
+                        flash |= octopus.increment_and_should_flash();
 
                         // above right
                         if x < self.x - 1 {
                             octopus = &mut self.octopus[y + 1][x + 1];
-                            octopus.increment();
-                            flash |= octopus.should_flash();
+                            flash |= octopus.increment_and_should_flash();
                         }
 
                         // above left
                         if x > 0 {
                             octopus = &mut self.octopus[y + 1][x - 1];
-                            octopus.increment();
-                            flash |= octopus.should_flash();
+                            flash |= octopus.increment_and_should_flash();
                         }
                     }
 
                     if y > 0 {
                         //below
                         octopus = &mut self.octopus[y - 1][x];
-                        octopus.increment();
-                        flash |= octopus.should_flash();
+                        flash |= octopus.increment_and_should_flash();
 
                         // below right
                         if x < self.x - 1 {
                             octopus = &mut self.octopus[y - 1][x + 1];
-                            octopus.increment();
-                            flash |= octopus.should_flash();
+                            flash |= octopus.increment_and_should_flash();
                         }
 
                         // below left
                         if x > 0 {
                             octopus = &mut self.octopus[y - 1][x - 1];
-                            octopus.increment();
-                            flash |= octopus.should_flash();
+                            flash |= octopus.increment_and_should_flash();
                         }
                     }
 
                     // right
                     if x < self.x - 1 {
                         octopus = &mut self.octopus[y][x + 1];
-                        octopus.increment();
-                        flash |= octopus.should_flash();
+                        flash |= octopus.increment_and_should_flash();
                     }
 
                     // left
                     if x > 0 {
                         octopus = &mut self.octopus[y][x - 1];
-                        octopus.increment();
-                        flash |= octopus.should_flash();
+                        flash |= octopus.increment_and_should_flash();
                     }
                 }
             }
@@ -217,6 +213,10 @@ impl Grid {
 
 fn main() {
     let mut grid = Grid::from(INPUT);
+
+    // to visualize, uncomment
+    // grid.visualize = true;
+
     let mut all_flash_step = None;
     let mut steps = 100;
 
