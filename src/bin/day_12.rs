@@ -2,12 +2,6 @@ use std::collections::{HashMap, HashSet};
 
 const INPUT: &str = include_str!("../../input/day_12.txt");
 
-#[derive(Debug, Eq, PartialEq)]
-struct Node {
-    name: String,
-    neighbours: HashSet<String>,
-}
-
 type Edge<'a> = (&'a str, &'a str);
 
 #[derive(Debug)]
