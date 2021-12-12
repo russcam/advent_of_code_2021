@@ -56,7 +56,7 @@ impl<'a> Graph<'a> {
 
         path.push(cave);
         if cave == "end" {
-            paths.push(path.clone());
+            paths.push(path);
             return;
         }
 
