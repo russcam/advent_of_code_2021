@@ -25,48 +25,20 @@ impl<'a> Graph<'a> {
         self.caves.entry(src).or_insert_with(Vec::new).push(dest);
     }
 
-    pub fn part_1(&mut self) -> Vec<Vec<&'a str>> {
-        // could make this faster by summing complete paths rather than collecting the actual paths
+    pub fn part_1(&self) -> Vec<Vec<&'a str>> {
         let mut paths = Vec::new();
-        self.walk_part_1("start", HashSet::new(), &mut paths, Vec::new());
+        self.walk("start", HashSet::new(), &mut paths, Vec::new(), true);
         paths
     }
 
-    fn walk_part_1(
-        &self,
-        cave: &'a str,
-        mut seen: HashSet<&'a str>,
-        paths: &mut Vec<Vec<&'a str>>,
-        mut path: Vec<&'a str>,
-    ) {
-        if seen.contains(cave) {
-            return;
-        }
-
-        path.push(cave);
-        if cave == "end" {
-            paths.push(path.clone());
-            return;
-        }
-
-        // track small caves we've seen
-        if cave.starts_with(char::is_lowercase) {
-            seen.insert(cave);
-        }
-
-        for neighbour in self.caves[cave].iter() {
-            self.walk_part_1(neighbour, seen.clone(), paths, path.clone());
-        }
-    }
-
-    pub fn part_2(&mut self) -> Vec<Vec<&'a str>> {
-        // could make this faster by summing complete paths rather than collecting the actual paths
+    pub fn part_2(&self) -> Vec<Vec<&'a str>> {
         let mut paths = Vec::new();
-        self.walk_part_2("start", HashSet::new(), &mut paths, Vec::new(), false);
+        self.walk("start", HashSet::new(), &mut paths, Vec::new(), false);
         paths
     }
 
-    fn walk_part_2(
+    // could make this faster by summing completed paths rather than collecting the actual paths.
+    fn walk(
         &self,
         cave: &'a str,
         mut seen: HashSet<&'a str>,
@@ -94,7 +66,7 @@ impl<'a> Graph<'a> {
         }
 
         for neighbour in self.caves[cave].iter().filter(|n| **n != "start") {
-            self.walk_part_2(neighbour, seen.clone(), paths, path.clone(), seen_twice);
+            self.walk(neighbour, seen.clone(), paths, path.clone(), seen_twice);
         }
     }
 }
