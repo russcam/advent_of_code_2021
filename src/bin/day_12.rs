@@ -26,6 +26,7 @@ impl<'a> Graph<'a> {
     }
 
     pub fn part_1(&mut self) -> Vec<Vec<&'a str>> {
+        // could make this faster by summing complete paths rather than collecting the actual paths
         let mut paths = Vec::new();
         self.walk_part_1("start", HashSet::new(), &mut paths, Vec::new());
         paths
@@ -59,6 +60,7 @@ impl<'a> Graph<'a> {
     }
 
     pub fn part_2(&mut self) -> Vec<Vec<&'a str>> {
+        // could make this faster by summing complete paths rather than collecting the actual paths
         let mut paths = Vec::new();
         self.walk_part_2("start", HashSet::new(), &mut paths, Vec::new(), false);
         paths
