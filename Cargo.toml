@@ -10,3 +10,4 @@ readme = "README.md"
 [dependencies]
 ansi_term = "0.12"
 once_cell = "1"
+pathfinding = "3.0.3"
